@@ -19,20 +19,11 @@ public:
         remainder = 0;
         result = new ListNode();
         iter = result;
-        while (true) {
+        while (!(l1 == nullptr && l2 == nullptr)) {
             int v1, v2, sum;
-            
-            if (l1 == nullptr && l2 == nullptr) {
-                if (remainder != 0)
-                    iter->next = new ListNode(remainder);
-                return result;
-            }
         
-            v1 = v2 = 0;
-            if (l1 != nullptr)
-                v1 = l1->val;
-            if (l2 != nullptr)
-                v2 = l2->val;
+            v1 = l1->val;
+            v2 = l2->val;
             
             sum = v1+v2+remainder;
             if (sum > 9) {
@@ -44,16 +35,54 @@ public:
                 iter->val = sum;
             }
             
-            if (l1 != nullptr)
-                l1 = l1->next;
-            if (l2 != nullptr)
-                l2 = l2->next;
+            l1 = l1->next;
+            l2 = l2->next;
             
-            if (!(l1 == nullptr && l2 == nullptr)) {
+            if (l1 != nullptr && l2 != nullptr) {
                 iter->next = new ListNode();
                 iter = iter->next;
+                continue;
+            }
+            
+            /* has reached end of both lists at the same time */
+            if (l1 == nullptr && l2 == nullptr) {
+                if (l2 == nullptr) {
+                    if (remainder == 0)
+                        return result;
+                    else {
+                        iter->next = new ListNode(remainder);
+                        return result;
+                    }
+                }
+            }
+            
+            /* has reached end of one of the list only */
+            if (l1 == nullptr) {
+                if (remainder == 0) {
+                    iter->next = l2;
+                    return result;
+                }
+                else {
+                    l1 = new ListNode();
+                    iter->next = new ListNode();
+                    iter = iter->next;
+                    continue;
+                }
+            }
+            else {
+                if (remainder == 0) {
+                    iter->next = l1;
+                    return result;
+                }
+                else {
+                    l2 = new ListNode();
+                    iter->next = new ListNode();
+                    iter = iter->next;
+                    continue;
+                }
             }
         }
+        return result;
     }
     
     ListNode* convert(vector<int> v) {
