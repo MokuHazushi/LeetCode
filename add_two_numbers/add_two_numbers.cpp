@@ -13,43 +13,47 @@ struct ListNode {
 class Solution {
 public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        bool hasRemainder = false;
-        vector<int> result, remainder;
+        ListNode *result, *iter;
+        int remainder;
         
-        do {
-            hasRemainder = false;
-            do {
-                int val1, val2;
-                val1 = val2 = 0;
-                if (l1 != nullptr)
-                    val1 = l1->val;
-                if (l2 != nullptr)
-                    val2 = l2->val;
-                int sum = val1 + val2;
-                if (sum > 9) {
-                    result.push_back(sum%10);
-                    remainder.push_back(1);
-                    hasRemainder = true;
-                }
-                else {
-                    result.push_back(sum);
-                    remainder.push_back(0);
-                }
-                
-                if (l1 != nullptr)
-                    l1 = l1->next;
-                if (l2 != nullptr)
-                    l2 = l2->next;
-            }
-            while (l1 != nullptr && l2 != nullptr);
+        remainder = 0;
+        result = new ListNode();
+        iter = result;
+        while (true) {
+            int v1, v2, sum;
             
-            if (hasRemainder) {
-                l1 = convert(result);
-                l2 = convertRemainder(remainder);
+            if (l1 == nullptr && l2 == nullptr) {
+                if (remainder != 0)
+                    iter->next = new ListNode(remainder);
+                return result;
             }
-        } while (hasRemainder);
+        
+            v1 = v2 = 0;
+            if (l1 != nullptr)
+                v1 = l1->val;
+            if (l2 != nullptr)
+                v2 = l2->val;
             
-            return convert(result);
+            sum = v1+v2+remainder;
+            if (sum > 9) {
+                remainder = 1;
+                iter->val = sum%10;
+            }
+            else {
+                remainder = 0;
+                iter->val = sum;
+            }
+            
+            if (l1 != nullptr)
+                l1 = l1->next;
+            if (l2 != nullptr)
+                l2 = l2->next;
+            
+            if (!(l1 == nullptr && l2 == nullptr)) {
+                iter->next = new ListNode();
+                iter = iter->next;
+            }
+        }
     }
     
     ListNode* convert(vector<int> v) {
@@ -65,30 +69,26 @@ public:
         iter->val = v[v.size()-1];
         return list;
     }
-    
-    ListNode* convertRemainder(vector<int> v) {
-        ListNode *iter, *list;
-        
-        list = new ListNode();
-        iter = list;
-        for (size_t i=0; i<v.size(); i++) {
-            iter->val = v[i];
-            iter->next = new ListNode();
-            iter = iter->next;
+
+    void print(ListNode* l) {
+        ListNode* tmp = l;
+        while (tmp != nullptr) {
+            cout << tmp->val << endl;
+            tmp = tmp->next;
         }
-        return list;
     }
 };
 
 int main() {
     Solution solution;
-    vector<int> num1 {5, 5};
-    vector<int> num2 {7, 7};
+    vector<int> num1 {2, 4, 3};
+    vector<int> num2 {5, 6, 4};
     ListNode *l1 = solution.convert(num1);
     ListNode *l2 = solution.convert(num2);
 
     ListNode *result = solution.addTwoNumbers(l1, l2);
 
+    cout << "Result" << endl;
     while (result != nullptr) {
         cout << result->val << endl;
         result = result->next;
