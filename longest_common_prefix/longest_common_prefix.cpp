@@ -22,7 +22,7 @@ public:
             addWord(word, &root);
         }
         
-        
+       
         // Find longest prefix
         string prefix = "";
         MyTreeNode *iter = &root;
