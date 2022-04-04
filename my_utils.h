@@ -6,6 +6,8 @@
 
 using namespace std;
 
+/* STRUCTURES */
+
 struct ListNode {
     int val;
     ListNode *next;
@@ -14,8 +16,7 @@ struct ListNode {
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
-ListNode* VectorToLinkedList(vector<int> &v);
-vector<int> LinkedListToVector(ListNode *l);
+/* TEMPLATE METHODS */
 
 template<typename T>
 string NumberVectorToString(vector<T> &v) {
@@ -39,9 +40,37 @@ string NumberVectorToString(vector<T> &v) {
     s.push_back(']');
     return s;
 }
+template string NumberVectorToString<int>(vector<int> &v);
+template string NumberVectorToString<bool>(vector<bool> &v);
 
+template<typename T>
+string DoubleEntryArrayToString(T **tab, int size) {
+    if (size == 0)
+        return string("[]");
+    
+    string s("[\n");
+    for (int i=0; i<size; i++) {
+        vector<T> tmp;
+        s.append("\t");
+
+        for (int j=size-1; j>=0; j--) {
+            tmp.push_back(tab[i][j]);
+        }
+        
+        s.append(NumberVectorToString(tmp));
+        s.append("\n");
+    }
+    s.append("]");
+    return s;
+}
+template string DoubleEntryArrayToString(bool **tab, int size);
+
+
+/* METHODS */
+ListNode* VectorToLinkedList(vector<int> &v);
+vector<int> LinkedListToVector(ListNode *l);
 string booleanToString(bool b);
 
-template string NumberVectorToString<int>(vector<int> &v);
+
 
 #endif
