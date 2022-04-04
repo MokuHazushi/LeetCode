@@ -6,27 +6,31 @@
 
 using namespace std;
 
-template<typename T>
-string NumberVectorToString(vector<T> &v) {
+ListNode* VectorToLinkedList(vector<int> &v) {
+    ListNode *head, *iter;
 
     if (v.empty())
-        return string("[]");
-
-    string s("[");
-
-    if (v.size() == 1) {
-        s.append(to_string(v[0]));
-        s.push_back(']');
-        return s;
+        return nullptr;
+    
+    head = new ListNode(v[0]);
+    iter = head;
+    for (int i=1; i<v.size(); i++) {
+        iter-> next = new ListNode(v[i]);
+        iter = iter->next;
     }
 
-    for (int i=0; i<v.size()-1; i++) {
-        s.append(to_string(v[i]));
-        s.append(", ");
-    }
-    s.append(to_string(v[v.size()-1]));
-    s.push_back(']');
-    return s;
+    return head;
 }
 
-template<> string NumberVectorToString<int>(vector<int> &v);
+vector<int> LinkedListToVector(ListNode *l) {
+    vector<int> result;
+    ListNode *iter;
+    
+    iter = l;
+    while (iter != nullptr) {
+        result.push_back(iter->val);
+        iter = iter->next;
+    }
+
+    return result;
+}
