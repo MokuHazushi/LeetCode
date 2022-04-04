@@ -34,3 +34,9 @@ vector<int> LinkedListToVector(ListNode *l) {
 
     return result;
 }
+
+string booleanToString(bool b) {
+    if (b)
+        return string("TRUE");
+    return string("FALSE");
+}

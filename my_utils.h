@@ -40,6 +40,8 @@ string NumberVectorToString(vector<T> &v) {
     return s;
 }
 
+string booleanToString(bool b);
+
 template string NumberVectorToString<int>(vector<int> &v);
 
 #endif
