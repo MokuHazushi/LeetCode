@@ -2,6 +2,7 @@
 #define MY_UTILS_H
 
 #include <vector>
+#include <map>
 #include <string>
 
 using namespace std;
@@ -64,6 +65,23 @@ string DoubleEntryArrayToString(T **tab, int size) {
     return s;
 }
 template string DoubleEntryArrayToString(bool **tab, int size);
+
+template<typename T>
+string NumberMapToString(map<T, T> &m) {
+    string s;
+
+    if (m.empty())
+        return string("Empty map");
+
+    for (auto it=m.begin(); it!=m.end(); ++it) {
+        s.append(to_string(it->first));
+        s.append(" -> ");
+        s.append(to_string(it->second));
+        s.push_back('\n');
+    }
+    return s;
+}
+template string NumberMapToString(map<int, int> &m);
 
 
 /* METHODS */
