@@ -6,47 +6,29 @@
 class Solution {
 public:
     int lastStoneWeight(vector<int>& stones) {
-        pair<int, int> max;
+        make_heap(stones.begin(), stones.end());
         
         while (stones.size() > 1) {
-            max = findMaximums(stones);
-			cout << "max.first=" << max.first << " max.second=" << max.second << endl;  
-            if (stones[max.first] == stones[max.second]) {
-                stones.erase(stones.begin()+max.second);
-                stones.erase(stones.begin()+max.first);
-            }
-            else if (stones[max.first] > stones[max.second]) {
-                stones[max.first] -= stones[max.second];
-                stones.erase(stones.begin()+max.second);
-            }
-            else {
-                stones[max.second] -= stones[max.first];
-                stones.erase(stones.begin()+max.first);
-            }
+            int first, second;
+            first = stones[0];
+            pop_heap(stones.begin(), stones.end());
+            stones.pop_back();
+            second = stones[0];
+            pop_heap(stones.begin(), stones.end());
+            stones.pop_back();
+            
+            if (first == second)
+                continue;
+            if (first < second)
+                stones.push_back(second-first);
+            else
+                stones.push_back(first-second);
+            push_heap(stones.begin(), stones.end());   
         }
         if (stones.empty())
             return 0;
-        return stones[0]; 
-    }
-    
-    pair<int,int> findMaximums(vector<int>& v) {
-        int max1, max2;
-        
-        max1 = 0;
-        max2 = 1;
-        for (int i=2; i<v.size(); i++) {
-            if (v[i] > v[max1]) {
-				if (v[max1] > v[max2])
-					max2 = max1;
-                max1 = i;
-			}
-            else if (v[i] > v[max2])
-                max2 = i;
-        }
-        if (max2 > max1)
-            return pair<int, int>(max1, max2);
-        return pair<int, int>(max2, max1);
-    }
+        return stones[0];
+    }    
 };
 
 int main() {
