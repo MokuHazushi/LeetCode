@@ -28,7 +28,7 @@ string NumberVectorToString(vector<T> &v) {
     string s("[");
 
     if (v.size() == 1) {
-        s.push_back(v[0]);
+        s.append(to_string(v[0]));
         s.push_back(']');
         return s;
     }
