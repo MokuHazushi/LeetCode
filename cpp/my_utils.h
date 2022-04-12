@@ -45,6 +45,23 @@ template string NumberVectorToString<int>(vector<int> &v);
 template string NumberVectorToString<bool>(vector<bool> &v);
 
 template<typename T>
+string DoubleNumberVectorToString(vector<vector<T>> &v) {
+    if (v.empty())
+        return string("[[]]");
+    string s("[\n");
+    for (int i=0; i<v.size()-1; i++) {
+        s.append("\t");
+        s.append(NumberVectorToString(v[i]));
+        s.append(",\n");
+    }
+    s.append("\t");
+    s.append(NumberVectorToString(v[v.size()-1]));
+    s.append("\n]");
+    return s;
+}
+template string DoubleNumberVectorToString<int>(vector<vector<int>> &v);
+
+template<typename T>
 string DoubleEntryArrayToString(T **tab, int size) {
     if (size == 0)
         return string("[]");
