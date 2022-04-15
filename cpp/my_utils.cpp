@@ -40,3 +40,24 @@ string booleanToString(bool b) {
         return string("TRUE");
     return string("FALSE");
 }
+
+void NumberBTToString_rec(TreeNode* node, string &acc) {
+    if (node == nullptr)
+        return;
+    acc.append(to_string(node->val));
+    acc.append(", ");
+    NumberBTToString_rec(node->left, acc);
+    NumberBTToString_rec(node->right, acc);
+}
+
+/*
+ * Create the string in Breadth first search order
+ */
+string NumberBTToString(TreeNode* root) {
+    string s("[");
+    TreeNode *iter = root;
+    NumberBTToString_rec(iter, s);
+    s.erase(s.end()-2);
+    s.append("]");
+    return s;
+}

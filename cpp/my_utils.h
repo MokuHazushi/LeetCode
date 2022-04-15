@@ -9,6 +9,15 @@ using namespace std;
 
 /* STRUCTURES */
 
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
 struct ListNode {
     int val;
     ListNode *next;
@@ -106,6 +115,10 @@ ListNode* VectorToLinkedList(vector<int> &v);
 vector<int> LinkedListToVector(ListNode *l);
 string booleanToString(bool b);
 
-
+/*
+ * Create the string in Breadth first search order
+ */
+string NumberBTToString(TreeNode* root);
+void NumberBTToString_rec(TreeNode* node, string &acc);
 
 #endif
