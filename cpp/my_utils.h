@@ -115,10 +115,7 @@ ListNode* VectorToLinkedList(vector<int> &v);
 vector<int> LinkedListToVector(ListNode *l);
 string booleanToString(bool b);
 
-/*
- * Create the string in Breadth first search order
- */
+/* Return string representing the tree in breadth traversal order */
 string NumberBTToString(TreeNode* root);
-void NumberBTToString_rec(TreeNode* node, string &acc);
 
 #endif

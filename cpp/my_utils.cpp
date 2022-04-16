@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <queue>
 
 #include <my_utils.h>
 
@@ -41,23 +42,29 @@ string booleanToString(bool b) {
     return string("FALSE");
 }
 
-void NumberBTToString_rec(TreeNode* node, string &acc) {
-    if (node == nullptr)
-        return;
-    acc.append(to_string(node->val));
-    acc.append(", ");
-    NumberBTToString_rec(node->left, acc);
-    NumberBTToString_rec(node->right, acc);
-}
-
-/*
- * Create the string in Breadth first search order
- */
-string NumberBTToString(TreeNode* root) {
+/* Return string representing the tree in breadth traversal order */
+string NumberBTToString(TreeNode* node) {
+    queue<TreeNode*> breadthTraversal;
     string s("[");
-    TreeNode *iter = root;
-    NumberBTToString_rec(iter, s);
-    s.erase(s.end()-2);
+    
+    breadthTraversal.push(node);
+    while (!breadthTraversal.empty()) {
+        TreeNode *head = breadthTraversal.front();
+        breadthTraversal.pop();
+
+        if (head == nullptr) {
+            s.append("null, ");
+            continue;
+        }
+        else {
+            s.append(to_string(head->val));
+            s.append(", ");
+        }
+        breadthTraversal.push(head->left);
+        breadthTraversal.push(head->right);
+    }
+
+    s.erase(s.end()-2, s.end());
     s.append("]");
     return s;
 }
