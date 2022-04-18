@@ -1,3 +1,5 @@
+// https://leetcode.com/problems/guess-number-higher-or-lower/
+
 struct Solution {}
 impl Solution {
     fn guessNumber(n: i32) -> i32 {

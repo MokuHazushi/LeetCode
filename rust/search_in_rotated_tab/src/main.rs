@@ -1,6 +1,6 @@
-use std::cmp::Ordering;
-
 struct Solution {}
+
+// https://leetcode.com/problems/search-in-rotated-sorted-array/
 
 struct Test {
     nums: Vec<i32>,
@@ -18,55 +18,42 @@ impl Test {
 
 impl Solution {
     pub fn search(nums: Vec<i32>, target: i32) -> i32 {
-        let pivot = Solution::find_pivot(&nums[..]);
-
-        if target >= nums[0] {
-            if let Some(ans) = Solution::binary_search(&nums[..(pivot+1) as usize], target) {
-                ans
-            }
-            else {
-                -1
-            }
-        }
-        else {
-            if let Some(ans) = Solution::binary_search(&nums[(pivot+1) as usize..], target) {
-                ans+pivot+1
-            }
-            else {
-                -1
-            }
-        }
-    }
-
-    pub fn binary_search(nums: &[i32], target: i32) -> Option<i32> {
         let mut min = 0;
-        let mut max = (nums.len()-1) as i32;
+        let mut max = nums.len()-1;
 
         while min <= max {
             let middle = (max-min)/2 + min;
-            match target.cmp(&nums[middle as usize]) {
-                Ordering::Less => max = middle-1,
-                Ordering::Greater => min = middle+1,
-                Ordering::Equal => return Some(middle),
+
+            if nums[middle] == target {
+                return middle as i32
+            }
+            
+            if nums[min] <= nums[middle] {
+                // nums[min..middle+1] is ordered
+
+                if target >= nums[min] && target < nums[middle] {
+                    max = middle-1;
+                    continue;
+                }
+                else {
+                    min = middle+1;
+                    continue;
+                }
+            }
+
+            if nums[middle] <= nums[max] {
+                // nums[middle..max+1] is ordered
+                if target > nums[middle] && target <= nums[max] {
+                    min = middle+1;
+                    continue;
+                }
+                else {
+                    max = middle-1;
+                    continue
+                }
             }
         }
-        None
-    }
-
-    pub fn find_pivot(nums: &[i32]) -> i32 {
-        let mut min = 0;
-        let mut max = nums.len() as i32;
-        while min < max {
-            let middle = (max-min)/2 + min;
-
-            if nums[min as usize] < nums[middle as usize] {
-                min = middle;
-            }
-            else {
-                max = middle;
-            }
-        }
-        min
+        -1
     }
 }
 

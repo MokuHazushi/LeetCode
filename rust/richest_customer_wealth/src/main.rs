@@ -1,5 +1,7 @@
 use std::vec;
 
+// https://leetcode.com/problems/richest-customer-wealth/
+
 fn main() {
     let accounts: Vec<Vec<i32>> = vec![
         vec![1,1,1,1],

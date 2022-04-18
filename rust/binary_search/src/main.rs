@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 
+// https://leetcode.com/problems/binary-search/
 
 struct Solution {}
 

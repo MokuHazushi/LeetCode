@@ -1,5 +1,7 @@
 use std::vec;
 
+// https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
+
 fn number_of_steps(num: i32) -> i32 {
     let mut num = num;
     let mut step;
