@@ -5,38 +5,38 @@
 
 // https://leetcode.com/problems/recover-binary-search-tree/
 
-const int I32_MIN = -2147483648;
-
 class Solution {
 public:
     void recoverTree(TreeNode* root) {
 		stack<TreeNode*> sortedOrder;
-		TreeNode *misplacedNodes1, *misplacedNodes2, *lastNode;
+		TreeNode *misplacedNodes1, *misplacedNodes2, *current, *lastNode, *successor;
 
 		sortedOrder.push(root);
-		lastNode = misplacedNodes1 = misplacedNodes2 = nullptr;
+		current = root;
+		misplacedNodes1 = misplacedNodes2 = lastNode = nullptr;
 		while (!sortedOrder.empty()) {
-			TreeNode *node = sortedOrder.top();
+			while (current != nullptr) {
+				current = current->left;
+				if (current != nullptr)
+					sortedOrder.push(current);
+			}
 
-			if (node->left != nullptr) {
-				sortedOrder.push(node->left);
-				continue;
-			}
+			TreeNode *node = sortedOrder.top();
 			sortedOrder.pop();
-			cout << "Val=" << node->val << endl;
-			if (node->right != nullptr) {
-				sortedOrder.push(node->right);
-			}
+			current = node->right;
+			
+			if (current != nullptr)
+				sortedOrder.push(current);
 
 			if (lastNode == nullptr) {
 				lastNode = node;
 				continue;
 			}
 
-			if (node->val < lastNode->val) {
+			if (lastNode->val > node->val) {
 				if (misplacedNodes1 == nullptr) {
 					misplacedNodes1 = lastNode;
-					misplacedNodes2 = node;
+					successor = node;
 				}
 				else {
 					misplacedNodes2 = node;
@@ -46,6 +46,10 @@ public:
 			lastNode = node;
 		}
 
+		if (misplacedNodes2 == nullptr)
+			misplacedNodes2 = successor;
+
+		swap(misplacedNodes1, misplacedNodes2);
 
     }
 
@@ -102,13 +106,13 @@ int main() {
 	new TreeNode(3, nullptr, new TreeNode(2)));
 
 	testSet.push_back(leetCExample1);
-	//testSet.push_back(leetCExample2);
-	//testSet.push_back(notRootSwitch);
-	//testSet.push_back(wrongPlacedChilds1);
-	//testSet.push_back(wrongPlacedChilds2);
-	//testSet.push_back(oneBranchTree1);
-	//testSet.push_back(oneBranchTree2);
-	//testSet.push_back(oneBranchTree3);
+	testSet.push_back(leetCExample2);
+	testSet.push_back(notRootSwitch);
+	testSet.push_back(wrongPlacedChilds1);
+	testSet.push_back(wrongPlacedChilds2);
+	testSet.push_back(oneBranchTree1);
+	testSet.push_back(oneBranchTree2);
+	testSet.push_back(oneBranchTree3);
 
 
 	cout << "Fixing BST which has exactly 2 misplaced nodes:" << endl;
