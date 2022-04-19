@@ -11,7 +11,40 @@ class Solution {
 public:
     void recoverTree(TreeNode* root) {
 		stack<TreeNode*> sortedOrder;
-		TreeNode *iter, *misplacedNodes1, *misplacedNodes2;
+		TreeNode *misplacedNodes1, *misplacedNodes2, *lastNode;
+
+		sortedOrder.push(root);
+		lastNode = misplacedNodes1 = misplacedNodes2 = nullptr;
+		while (!sortedOrder.empty()) {
+			TreeNode *node = sortedOrder.top();
+
+			if (node->left != nullptr) {
+				sortedOrder.push(node->left);
+				continue;
+			}
+			if (node->right != nullptr) {
+				sortedOrder.push(node->right);
+			}
+
+			sortedOrder.pop();
+
+			if (lastNode == nullptr) {
+				lastNode = node;
+				continue;
+			}
+
+			if (node->val < lastNode->val) {
+				if (misplacedNodes1 == nullptr) {
+					misplacedNodes1 = lastNode;
+					misplacedNodes2 = node;
+				}
+				else {
+					misplacedNodes2 = node;
+					break;
+				}
+			}
+			lastNode = node;
+		}
 
 
     }
