@@ -23,6 +23,7 @@ public:
 				continue;
 			}
 			sortedOrder.pop();
+			cout << "Val=" << node->val << endl;
 			if (node->right != nullptr) {
 				sortedOrder.push(node->right);
 			}
@@ -101,13 +102,13 @@ int main() {
 	new TreeNode(3, nullptr, new TreeNode(2)));
 
 	testSet.push_back(leetCExample1);
-	testSet.push_back(leetCExample2);
-	testSet.push_back(notRootSwitch);
-	testSet.push_back(wrongPlacedChilds1);
-	testSet.push_back(wrongPlacedChilds2);
-	testSet.push_back(oneBranchTree1);
-	testSet.push_back(oneBranchTree2);
-	testSet.push_back(oneBranchTree3);
+	//testSet.push_back(leetCExample2);
+	//testSet.push_back(notRootSwitch);
+	//testSet.push_back(wrongPlacedChilds1);
+	//testSet.push_back(wrongPlacedChilds2);
+	//testSet.push_back(oneBranchTree1);
+	//testSet.push_back(oneBranchTree2);
+	//testSet.push_back(oneBranchTree3);
 
 
 	cout << "Fixing BST which has exactly 2 misplaced nodes:" << endl;
