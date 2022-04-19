@@ -22,11 +22,10 @@ public:
 				sortedOrder.push(node->left);
 				continue;
 			}
+			sortedOrder.pop();
 			if (node->right != nullptr) {
 				sortedOrder.push(node->right);
 			}
-
-			sortedOrder.pop();
 
 			if (lastNode == nullptr) {
 				lastNode = node;
