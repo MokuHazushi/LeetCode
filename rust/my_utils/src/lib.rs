@@ -25,7 +25,7 @@ pub mod my_utils {
 
             for n in list {
                 iter.next = Some(Box::new(ListNode::new(*n)));
-                iter = iter.next.as_mut().unwrap().as_mut();
+                iter = iter.next.as_mut().unwrap();
             }
 
             head.next
@@ -37,7 +37,7 @@ pub mod my_utils {
             let mut iter = llist.as_ref();
             while iter != None {
                 if let Some(ref node) = iter {
-                    list.push(node.as_ref().val);
+                    list.push(node.val);
                     iter = node.next.as_ref();
                 }
             }
