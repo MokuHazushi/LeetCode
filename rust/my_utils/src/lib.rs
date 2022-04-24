@@ -15,26 +15,26 @@ pub mod my_utils {
             }
         }
 
-        pub fn from_vec(list: &Vec<i32>) -> Self {
+        pub fn from_vec(list: &Vec<i32>) -> Option<Box<ListNode>> {
             if list.is_empty() {
-                panic!("Expected non-empty list");
+                return None;
             }
 
             let mut head = ListNode::new(list[0]);
             let mut iter = &mut head;
 
-            for i in 1..list.len() {
-                iter.next = Some(Box::new(ListNode::new(list[i])));
+            for n in list {
+                iter.next = Some(Box::new(ListNode::new(*n)));
                 iter = iter.next.as_mut().unwrap().as_mut();
             }
 
-            head
+            head.next
         }
 
-        pub fn to_vec(&self) -> Vec<i32> {
-            let mut list = vec![self.val];
+        pub fn to_vec(llist: &Option<Box<ListNode>>) -> Vec<i32> {
+            let mut list = Vec::new();
 
-            let mut iter = self.next.as_ref();
+            let mut iter = llist.as_ref();
             while iter != None {
                 if let Some(ref node) = iter {
                     list.push(node.as_ref().val);
@@ -56,33 +56,23 @@ mod tests {
 
     #[test]
     fn build_linked_list() {
-        let list = vec![1,2,3];
-        let llist = ListNode::from_vec(&list);
-        let mut i = 0;
-        let mut iter = &llist;
+        let source = vec![1,2,3];
+        let llist = ListNode::from_vec(&source);
+        let result = ListNode::to_vec(&llist);
 
-        loop {
-            assert_eq!(list[i], iter.val);
-            
-            i += 1;
-            match &iter.next {
-                Some(node) => iter = node.as_ref(),
-                None => break,
-            }
+        for i in 0..source.len() {
+            assert_eq!(source[i], result[i]);
         }
-
     }
 
     #[test]
-    fn recover_linked_list() {
-        let list = vec![1,2,3];
-        let llist = ListNode::from_vec(&list);
-        let recovered_list = llist.to_vec();
+    fn build_empty_linked_list() {
+        let source = Vec::new();
+        let llist = ListNode::from_vec(&source);
+        let result = ListNode::to_vec(&llist);
 
-        for i in 0..recovered_list.len() {
-            assert_eq!(list[i], recovered_list[i]);
-        }
-
-
+        assert_eq!(llist, None);
+        assert!(result.is_empty());
+        
     }
 }
