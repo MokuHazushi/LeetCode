@@ -4,27 +4,21 @@ struct Solution {}
 
 impl Solution {
     pub fn find_peak_element(nums: Vec<i32>) -> i32 {
-        let mut i = 0;
-        let mut j = nums.len()-1;
-        
-        while j-i > 1 {
+        let (mut i, mut j) = (0, nums.len()-1);
+
+        while i<j {
             let mid = (j-i)/2 + i;
 
             if nums[mid] > nums[mid+1] {
                 j = mid;
             }
             else {
-                i = mid;
+                i = mid+1;
             }
             
         }
 
-        if nums[i] > nums[j] {
-            i as i32
-        }
-        else {
-            j as i32
-        }
+        i as i32
     }
 }
 
