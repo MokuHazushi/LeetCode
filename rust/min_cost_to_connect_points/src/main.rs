@@ -11,25 +11,25 @@ struct SearchElement {
 }
 
 impl Solution {
-    pub fn min_cost_connect_points(points: Vec<Vec<i32>>) -> i32 {
-        let mut my_points = points.clone();
+    pub fn min_cost_connect_points(mut points: Vec<Vec<i32>>) -> i32 {
+        let nb_points = points.len();
         let mut total_cost = 0;
         let mut search_heap = BinaryHeap::new();
         let mut visisted_nodes = Vec::new();
-        let first_point = my_points.remove(0);
+        let first_point = points.remove(0);
 
-        Solution::populate_heap(&first_point, &my_points, &mut search_heap);
+        Solution::populate_heap(&first_point, &points, &mut search_heap);
         visisted_nodes.push(first_point);
 
-        while visisted_nodes.len() < points.len() {
+        while visisted_nodes.len() < nb_points {
             if let Some(next_point) = search_heap.pop() {
                 if visisted_nodes.contains(&next_point.point) {
                     continue;
                 }
                 total_cost += next_point.cost;
-                my_points.retain(|p| *p != next_point.point);
+                points.retain(|p| *p != next_point.point);
                 visisted_nodes.push(next_point.point.clone());
-                Solution::populate_heap(&next_point.point, &my_points, &mut search_heap);
+                Solution::populate_heap(&next_point.point, &points, &mut search_heap);
             }
         }
 
