@@ -30,7 +30,7 @@ impl Solution {
 fn main() {
     println!("Climbing stairs!");
 
-    for i in 1..10 {
+    for i in 1..=10 {
         println!("{} stairs -> {}", i, Solution::climb_stairs(i));
     }
 }
