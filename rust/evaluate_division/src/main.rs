@@ -24,8 +24,6 @@ impl Solution {
                 graph.insert(equations[i][1].clone(), vec![(equations[i][0].clone(), 1.0/values[i])]);
             }
         }
-
-        println!("graph={:?}", graph);
         
         queries.iter()
             .map(|q| Solution::bfs(&graph, &q[0], &q[1]))
@@ -77,7 +75,6 @@ impl Solution {
         let mut parent = goal;
 
         while parent != start {
-            println!("parent={}", parent);
             let new_parent = *parents.get(parent).unwrap();
 
             for neighbor in graph.get(new_parent).unwrap() {
