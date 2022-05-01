@@ -28,7 +28,7 @@ impl Solution {
                 bound.1 += 1;
             }
             else if diff < 0 { // smaller than n
-                bound.1 += Solution::bs((bound.0, max), diff);
+                bound.1 += Solution::binary_search((bound.1, max), diff);
             }
             else { // bigger than n
                 bound.0 += 1;
@@ -42,17 +42,17 @@ impl Solution {
         ((n*(n+1))/2) as i64
     }
 
-    fn bs(bound: (i32, i32), diff: i64) -> i32 {
+    pub fn binary_search(bound: (i32, i32), diff: i64) -> i32 {
         let (mut left, mut right) = (bound.0, bound.1);
 
-        while left < right {
+        while left <= right {
             let mid = (right-left)/2 + left;
-            let mid_val = Solution::sum(mid as i64) - Solution::sum(bound.1 as i64);
+            let mid_val = Solution::sum((mid) as i64) - Solution::sum(bound.0 as i64);
 
             match mid_val.cmp(&diff) {
                 Ordering::Less => left = mid+1,
                 Ordering::Greater => right = mid-1,
-                Ordering::Equal => { return mid; },
+                Ordering::Equal => { return mid-bound.0; },
             }
         }
         1
@@ -101,4 +101,16 @@ fn main() {
     let now = Instant::now();
     let res = Solution::consecutive_numbers_sum(65581200);
     println!("Found {}, Took {:?}", res, now.elapsed());
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_binary_search() {
+        assert_eq!(2, Solution::binary_search((3,6), 9)); // answer is inside range
+        assert_eq!(3, Solution::binary_search((3,6), 15)); // answer is last element
+        assert_eq!(1, Solution::binary_search((3,6), 4)); // answer is first element
+    }
 }
