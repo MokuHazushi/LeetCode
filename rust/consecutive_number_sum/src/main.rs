@@ -3,30 +3,59 @@
 struct Solution {}
 
 use std::time::Instant;
-
-use std::collections::HashMap;
+use std::cmp::Ordering;
 
 impl Solution {
     pub fn consecutive_numbers_sum(n: i32) -> i32 {
         let max = (n as f32/2.0).ceil() as i32;
-        let mut ans = 1;
-        let mut added_numbers: HashMap<i64, bool> = HashMap::new();
-
-        if n == 1 {
-            return 1;
-        }
-
-        for i in 0..=max {
-            let i = i as i64;
-            let sum = (i*(i+1))/2;
-
-            if added_numbers.contains_key(&(sum+n as i64)) || added_numbers.contains_key(&(sum-n as i64)) {
-                ans += 1;
+        let mut ans = {
+            if n <= 3 {
+                0
             }
-            added_numbers.insert(sum, true);
+            else {
+                1
+            }
+        };
+        let mut bound = (1, 1);
+
+        while bound.1 <= max+1 {
+            let consecutive_sum = Solution::sum(bound.1 as i64) - Solution::sum((bound.0-1) as i64);
+            let diff = consecutive_sum - n as i64;
+
+            //println!("Bound={:?}", bound);
+            if diff == 0 {
+                ans += 1;
+                bound.1 += 1;
+            }
+            else if diff < 0 { // smaller than n
+                bound.1 += Solution::bs((bound.0, max), diff);
+            }
+            else { // bigger than n
+                bound.0 += 1;
+            }
         }
 
         ans
+    }
+
+    fn sum(n: i64) -> i64 {
+        ((n*(n+1))/2) as i64
+    }
+
+    fn bs(bound: (i32, i32), diff: i64) -> i32 {
+        let (mut left, mut right) = (bound.0, bound.1);
+
+        while left < right {
+            let mid = (right-left)/2 + left;
+            let mid_val = Solution::sum(mid as i64) - Solution::sum(bound.1 as i64);
+
+            match mid_val.cmp(&diff) {
+                Ordering::Less => left = mid+1,
+                Ordering::Greater => right = mid-1,
+                Ordering::Equal => { return mid; },
+            }
+        }
+        1
     }
 }
 
@@ -55,8 +84,9 @@ fn main() {
     test_set.push(Test::new(5, 2));
     test_set.push(Test::new(9, 3));
     test_set.push(Test::new(15, 4));
-    
 
+    test_set.push(Test::new(43156417, 4));
+    
     for test in test_set {
         let ans = Solution::consecutive_numbers_sum(test.n);
         if ans == test.expect {
@@ -66,15 +96,9 @@ fn main() {
             println!("ERROR n={} -> {}, expected {}", test.n, ans, test.expect);
         }
     }
-
-    println!("Trying to find some pattern...");
-
-    for i in 1..=36 {
-        println!("n={} -> {}", i, Solution::consecutive_numbers_sum(i));
-    }
-
-    println!("Computation time test, compute for n=8504986");
+    
+    println!("Computation time test, compute for n=65581200");
     let now = Instant::now();
-    Solution::consecutive_numbers_sum(8504986);
-    println!("Took {:?}", now.elapsed());
+    let res = Solution::consecutive_numbers_sum(65581200);
+    println!("Found {}, Took {:?}", res, now.elapsed());
 }
