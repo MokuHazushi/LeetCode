@@ -3,35 +3,45 @@
 struct Solution {}
 
 use std::cmp::Ordering;
-use std::cmp;
 
 impl Solution {
     pub fn find_closest_elements(arr: Vec<i32>, k: i32, x: i32) -> Vec<i32> {
-        let mut x_pos = Solution::binary_search(&arr, x);
+        let x_pos = Solution::binary_search(&arr, x);
         let mut ans = Vec::new();
+        let (mut bound_left, mut bound_right) = (x_pos as i32, x_pos as i32);
+        let mut go_left;
         
-        if arr.len()-1-x_pos > x_pos {
-            // Fill from start of arr
-            let k = k as usize;
-            for i in cmp::max(0, x_pos-(k/2))..x_pos {
-                ans.push(arr[i]);
+        while bound_right - bound_left + 1 < k {
+            let next_left = bound_left - 1;
+            let next_right = bound_right + 1;
+
+            if next_left < 0 {
+                go_left = false;
             }
-            while ans.len() < k {
-                ans.push(arr[x_pos]);
-                x_pos += 1;
+            else if next_right > (arr.len()-1) as i32 {
+                go_left = true;
+            }
+            else if (arr[next_left as usize] - x).abs() <= (arr[next_right as usize] - x).abs() {
+                go_left = true;
+            }
+            else {
+                go_left = false;
+            }
+
+            if go_left {
+                if bound_left > 0 {
+                    bound_left -= 1;
+                }
+            }
+            else {
+                if bound_right < (arr.len()-1) as i32 {
+                    bound_right += 1;
+                }
             }
         }
-        else {
-            // Fill from end of arr
-            let k = k as usize;
-            for i in (x_pos..cmp::min(arr.len(), x_pos+(k/2))).rev() {
-                ans.push(arr[i]);
-            }
-            while ans.len() < k {
-                ans.push(arr[x_pos]);
-                x_pos -= 1;
-            }
-            ans.reverse();
+
+        for i in bound_left..=bound_right {
+            ans.push(arr[i as usize]);
         }
 
         ans
@@ -138,7 +148,16 @@ mod tests {
         let test = Test::new(vec![1,2,4,5], 3, 3);
         assert_eq!(vec![1,2,4], Solution::find_closest_elements(test.arr, test.k, test.x));
 
-        let test = Test::new(vec![-1,1,2,3,4,5], 7, 3);
+        let test = Test::new(vec![-2,-1,1,2,3,4,5], 7, 3);
         assert_eq!(vec![-2,-1,1,2,3,4,5], Solution::find_closest_elements(test.arr, test.k, test.x));
+
+        let test = Test::new(vec![0,1,1,1,2,3,6,7,8,9], 9, 4);
+        assert_eq!(vec![0,1,1,1,2,3,6,7,8], Solution::find_closest_elements(test.arr, test.k, test.x));
+
+        let test = Test::new(vec![0,0,1,2,3,3,4,7,7,8], 3, 5);
+        assert_eq!(vec![3,3,4], Solution::find_closest_elements(test.arr, test.k, test.x));
+
+        let test = Test::new(vec![0,0,0,1,3,5,6,7,8,8], 2, 2);
+        assert_eq!(vec![1,3], Solution::find_closest_elements(test.arr, test.k, test.x));
     }
 }
