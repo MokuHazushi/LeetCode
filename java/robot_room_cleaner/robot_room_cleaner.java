@@ -1,3 +1,7 @@
+package robot_room_cleaner;
+
+import java.util.*;
+
 interface Robot {
 	public boolean move();
 	public void turnLeft();
@@ -100,49 +104,151 @@ class RobotImpl implements Robot {
 	}
 }
 
+class Cell {
+	int row, col;
+
+	public Cell(int row, int col) {
+		this.row = row;
+		this.col = col;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Cell) {
+			Cell c = (Cell)o;
+			return row == c.row && col == c.col;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return row ^ col;
+	}
+}
+
+enum Direction { UP, LEFT, DOWN, RIGHT };
+
 class Solution {
+	Robot robot;
+	Cell curPos;
+	Direction curDirection;
+	Hashtable<Cell, boolean[]> cells = new Hashtable<>(); // boolean[i] is true when boolean[Direction.ordinal()] has been visited
+	Stack<Cell> path = new Stack<>();
+
     public void cleanRoom(Robot robot) {
-		findTopLeftCorner(robot);
-		doUpDownCleaning(robot);
+		this.robot = robot;
+		curDirection = Direction.UP;
+		curPos = new Cell(0,0);
+
+		path.push(curPos);
+		cells.put(curPos, new boolean[]{false, false, false, false});
+		while (!path.isEmpty()) {
+			curPos = path.peek();
+
+			Cell neighbor = selectNextCell();
+			if (neighbor == null) {
+				path.pop();
+				if (!path.isEmpty())
+					goToCell(findDirection(path.peek()));
+				continue;
+			}
+
+			Direction nextDirection = findDirection(neighbor);
+			cells.get(curPos)[nextDirection.ordinal()] = true;
+			cells.get(neighbor)[getOppositeDirection(nextDirection).ordinal()] = true;
+			if (goToCell(nextDirection))
+				path.push(neighbor);
+		}
     }
 
-	// Return robot facing down
-	void findTopLeftCorner(Robot robot) {
-		// Assume robot is facing up
-		do {
-			robot.clean();
-		} while(robot.move());
-		robot.turnLeft();
-		do {
-			robot.clean();
-		} while(robot.move());
-		robot.turnLeft();
+	private Cell selectNextCell() {
+		boolean[] exploredDirection = cells.get(curPos);
+		for (int i=0; i<exploredDirection.length; i++) {
+			if (!exploredDirection[i]) {
+				Cell neighbor = getCell(Direction.values()[i]);
+				for (boolean b : cells.get(neighbor)) {
+					if (!b)
+						return neighbor;
+				}
+				exploredDirection[i] = true;
+			}
+		}
+		return null;
 	}
 
-	void doUpDownCleaning(Robot robot) {
-		// Assume robot is facing down
-		while (true) {
-			// Go down
-			do {
-				robot.clean();
-			} while(robot.move());
-			// Go one time right
-			robot.turnLeft();
-			if (!robot.move())
+	// Return the cell neighbor to curPos, create a new entry in cells is key does not exist
+	private Cell getCell(Direction direction) {
+		Cell neighbor;
+		switch (direction) {
+			case UP:
+				neighbor = new Cell(curPos.row-1, curPos.col);
 				break;
-			// Face up
-			robot.turnLeft();
-			do {
-				robot.clean();
-			} while(robot.move());
-			// Go on time right
-			robot.turnRight();
-			if (!robot.move())
+			case LEFT:
+				neighbor = new Cell(curPos.row, curPos.col-1);
 				break;
-			// Face down
-			robot.turnRight();
+			case DOWN:
+				neighbor = new Cell(curPos.row+1, curPos.col);
+				break;
+			default:
+				neighbor = new Cell(curPos.row, curPos.col+1);
+		}
+		if (!cells.containsKey(neighbor))
+			cells.put(neighbor, new boolean[]{false, false, false, false});
+
+		return neighbor;
+	}
+
+	// Output where the destination cell is regarding curPos
+	private Direction findDirection(Cell dest) {
+		int diffRow = curPos.row - dest.row;
+		int diffCol = curPos.col - dest.col;
+
+		if (diffCol == -1)
+			return Direction.RIGHT;
+		if (diffCol == 1)
+			return Direction.LEFT;
+		if (diffRow == -1)
+			return Direction.DOWN;
+
+		return Direction.UP;
+	}
+
+	// Rotate the robot to align with destDirection
+	private void alignDirection(Direction destDirection) {
+		int directionDiff = curDirection.ordinal() - destDirection.ordinal();
+
+		if (directionDiff < 0) {
+			for (int i=0; i<Math.abs(directionDiff); i++)
+				robot.turnRight();
+		}
+		else {
+			for (int i=0; i<directionDiff; i++)
+				robot.turnLeft();
+		}
+		curDirection = destDirection;
+	}
+
+	private Direction getOppositeDirection(Direction direction) {
+		switch (direction) {
+			case UP:
+				return Direction.DOWN;
+			case LEFT:
+				return Direction.RIGHT;
+			case DOWN:
+				return Direction.UP;
+			default:
+				return Direction.LEFT;
 		}
 	}
+
+	// Try to go to destination cell
+	private boolean goToCell(Direction destDirection) {
+		alignDirection(destDirection);
+		robot.clean();
+		return robot.move();
+	}
+
 }
 
 class Main {
