@@ -1,3 +1,5 @@
+package letter_combinations;
+
 // https://leetcode.com/problems/letter-combinations-of-a-phone-number/
 
 import java.util.Arrays;

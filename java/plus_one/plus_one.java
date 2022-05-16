@@ -1,3 +1,5 @@
+package plus_one;
+
 // https://leetcode.com/problems/plus-one/
 
 import java.util.ArrayList;

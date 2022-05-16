@@ -1,3 +1,5 @@
+package delete_and_earn;
+
 // https://leetcode.com/problems/delete-and-earn/
 
 import java.util.Arrays;

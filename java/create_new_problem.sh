@@ -3,7 +3,8 @@
 mkdir $1
 
 # Source file
-echo "class Main {" > $1/$1.java
+echo "package $1;" > $1/$1.java
+echo "class Main {" >> $1/$1.java
 echo -e "\tpublic static void main(String args[]) {" >> $1/$1.java
 echo -e "\t\tSystem.out.println(\"Stuff\");" >> $1/$1.java
 echo -e "\t\tSolution solution = new Solution();" >> $1/$1.java
