@@ -12,7 +12,8 @@ class Solution {
 			return 0;
 
 		int[][] memory = new int[obstacleGrid.length][obstacleGrid[0].length];
-		return dp_topdown(0, 0, obstacleGrid, memory);		        
+		//return dp_topdown(0, 0, obstacleGrid, memory);		      
+		return dp_bottomup(obstacleGrid, memory);  
     }
 
 	int dp_topdown(int i, int j, int[][] obstacleGrid, int[][] memory) {
@@ -27,6 +28,32 @@ class Solution {
 		}
 
 		return memory[i][j];
+	}
+
+	int dp_bottomup(int[][] obstacleGrid, int[][] memory) {
+
+		for (int i=0; i<obstacleGrid.length; i++) {
+			for (int j=0; j<obstacleGrid[0].length; j++) {
+				if (i == 0 && j == 0) {
+					memory[i][j] = 1;
+					continue;
+				}
+
+				if (obstacleGrid[i][j] == 1) {
+					memory[i][j] = 0;
+					continue;
+				}
+
+				if (i == 0)
+					memory[i][j] = memory[i][j-1];
+				else if (j == 0)
+					memory[i][j] = memory[i-1][j];
+				else
+					memory[i][j] = memory[i-1][j] + memory[i][j-1];
+			}
+		}
+
+		return memory[obstacleGrid.length-1][obstacleGrid[0].length-1];
 	}
 }
 
