@@ -4,20 +4,21 @@ struct Solution {}
 
 use std::time::Instant;
 
+// Thanks to Claude Gravel (github.com/clgravel) for math support and implementation 
 impl Solution {
     pub fn consecutive_numbers_sum(n: i32) -> i32 {
         let mut r = 0;
-        let max_div = (((2*n) as f32).sqrt().ceil() + 1.0) as i32;
+        let max_div = (((2*n) as f32).sqrt().ceil()) as i32;
 
         for n1 in 1..max_div {
-            if n % n1 == 0 {
+            if (2*n) % n1 == 0 {
                 let tmp = n - (n1*(n1+1)/2);
                 if tmp % n1 == 0 {
                     r += 1;
                 }
             }
         }
-        r+1
+        r
     }
 }
 
