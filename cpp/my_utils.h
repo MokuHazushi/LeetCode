@@ -114,6 +114,7 @@ template string NumberMapToString(map<int, int> &m);
 ListNode* VectorToLinkedList(vector<int> &v);
 vector<int> LinkedListToVector(ListNode *l);
 string booleanToString(bool b);
+string StringVectorToString(vector<string> &v);
 
 /* Return string representing the tree in breadth traversal order */
 string NumberBTToString(TreeNode* root);

@@ -68,3 +68,24 @@ string NumberBTToString(TreeNode* node) {
     s.append("]");
     return s;
 }
+
+string StringVectorToString(vector<string> &v) {
+    if (v.empty())
+        return string("[]");
+
+    string s("[");
+
+    if (v.size() == 1) {
+        s.append(v[0]);
+        s.push_back(']');
+        return s;
+    }
+
+    for (int i=0; i<v.size()-1; i++) {
+        s.append(v[i]);
+        s.append(", ");
+    }
+    s.append(v[v.size()-1]);
+    s.push_back(']');
+    return s;
+}
