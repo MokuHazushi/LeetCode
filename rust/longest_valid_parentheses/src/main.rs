@@ -6,27 +6,50 @@ use std::cmp;
 
 impl Solution {
     pub fn longest_valid_parentheses(s: String) -> i32 {
-        let (mut ans, mut max_ans) = (0,0);
-        let mut opened_bracket_left  = 0;
-
+        let (mut left_stack, mut right_stack) = (0, 0);
+        let mut longest_seq = 0;
+        
         for c in s.bytes() {
             if c == b'(' {
-                opened_bracket_left += 1;
+                left_stack += 1;
             }
             else {
-                if opened_bracket_left == 0 {
-                    max_ans = cmp::max(ans, max_ans);
-                    ans = 0;
-                }
-                else {
-                    ans += 1;
-                    opened_bracket_left -= 1;
-                }
+                right_stack += 1;
+            }
+            
+            if left_stack == right_stack {
+                longest_seq = cmp::max(longest_seq, left_stack);
+            }
+            
+            if right_stack > left_stack {
+                left_stack = 0;
+                right_stack = 0;
             }
         }
-
-        max_ans = cmp::max(ans, max_ans);
-        2*max_ans
+        
+        left_stack = 0;
+        right_stack = 0;
+        
+        for c in s.bytes().rev() {
+            if c == b'(' {
+                left_stack += 1;
+            }
+            else {
+                right_stack += 1;
+            }
+            
+            if left_stack == right_stack {
+                longest_seq = cmp::max(longest_seq, left_stack);
+            }
+            
+            if left_stack > right_stack {
+                left_stack = 0;
+                right_stack = 0;
+            }
+            
+        }
+        
+        2*longest_seq        
     }
 }
 
