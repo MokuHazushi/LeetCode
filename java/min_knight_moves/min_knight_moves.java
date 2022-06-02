@@ -46,7 +46,7 @@ class Move {
 	}
 
 	public boolean inBounds() {
-		return pos.x > 0 && pos.y > 0;
+		return (pos.x > 0 || pos.y > 0) && (direction[0] > 0 || direction[1] > 0);
 	}
 
 	public void updateMemory(Map<Position, Integer> memory) {
@@ -63,7 +63,7 @@ class Solution {
 
 		// In clock-wise order
         int[][] allDirections = new int[][] {
-			{1,2}, {2,1}, {2,-1}, {1,-2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}
+			{1,2}, {2,1}, {2,-1}, {1,-2}, {-2, 1}, {-1, 2}
 		};
 
 		Map<Position, Integer> numberOfMoves = new HashMap<>();
@@ -73,13 +73,12 @@ class Solution {
 		for (int[] direction : allDirections) {
 			Move move = new Move(new Position(direction[0], direction[1]), direction);
 			nextPossibleMoves.add(move);
+			move.updateMemory(numberOfMoves);
 		}
 
 		while (!nextPossibleMoves.isEmpty()) {
 			Move nextMove = nextPossibleMoves.poll();
 			Position pos = nextMove.pos;
-
-			nextMove.updateMemory(numberOfMoves);
 
 			if (pos.x == Math.abs(x) && pos.y == Math.abs(y))
 				return numberOfMoves.get(pos);
@@ -89,6 +88,7 @@ class Solution {
 				Move move = new Move(nextPos, direction);
 				if (move.inBounds() && !numberOfMoves.containsKey(nextPos))
 					nextPossibleMoves.add(move);
+					move.updateMemory(numberOfMoves);
 			}
 		}
 
@@ -102,8 +102,12 @@ class Main {
 		Solution solution = new Solution();
 		List<int[]> testSet = new ArrayList<>();
 
+		testSet.add(new int[]{0,1});
 		testSet.add(new int[]{2,1});
 		testSet.add(new int[]{5,5});
+		testSet.add(new int[]{-150, -150});
+		testSet.add(new int[]{209, -58});
+		testSet.add(new int[]{105, 100});
 
 		for (int[] test : testSet)
 			System.out.println(Arrays.toString(test) + " -> " + solution.minKnightMoves(test[0], test[1]));
