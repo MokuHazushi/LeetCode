@@ -7,51 +7,24 @@ import java.util.ArrayList;
 
 import java.util.Queue;
 import java.util.ArrayDeque;
-import java.util.Map;
-import java.util.HashMap;
-
-class Position {
-	int x, y;
-
-	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Position) {
-			Position other = (Position)o;
-			return other.x == x && other.y == y;
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 31 * hash + Integer.hashCode(x);
-		hash = 31 * hash + Integer.hashCode(y);
-		return hash;
-	}
-}
 
 class Move {
-	Position pos;
+	int x, y;
 	int[] direction;
 
-	public Move(Position pos, int[] direction) {
-		this.pos = pos;
+	public Move(int x, int y, int[] direction) {
+		this.x = x;
+		this.y = y;
 		this.direction = direction;
 	}
 
 	public boolean inBounds() {
-		return (pos.x > 0 || pos.y > 0) && (direction[0] > 0 || direction[1] > 0);
+		return (x >= 0 && y >= 0) && !(x == 0 && y == 0);
 	}
 
-	public void updateMemory(Map<Position, Integer> memory) {
-		Position comeFrom = new Position(pos.x - direction[0], pos.y - direction[1]);
-		memory.put(pos, memory.get(comeFrom)+1);
+	public void updateMemory(int[][] memory) {
+		int[] comeFrom = new int[]{x - direction[0], y - direction[1]};
+		memory[x][y] = 1 + memory[comeFrom[0]][comeFrom[1]];
 	}
 }
 
@@ -60,35 +33,41 @@ class Solution {
 
 		if (x == 0 && y == 0)
 			return 0;
+		
+		if (Math.abs(x) == 1 && Math.abs(y) == 1)
+			return 2;
 
 		// In clock-wise order
         int[][] allDirections = new int[][] {
-			{1,2}, {2,1}, {2,-1}, {1,-2}, {-2, 1}, {-1, 2}
+			{1,2}, {2,1}, {2,-1}, {1,-2}, {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}
 		};
 
-		Map<Position, Integer> numberOfMoves = new HashMap<>();
-		numberOfMoves.put(new Position(0, 0), 0);
+		int[][] numberOfMoves = new int[303][303];
 
 		Queue<Move> nextPossibleMoves = new ArrayDeque<>();
 		for (int[] direction : allDirections) {
-			Move move = new Move(new Position(direction[0], direction[1]), direction);
-			nextPossibleMoves.add(move);
-			move.updateMemory(numberOfMoves);
+			Move move = new Move(direction[0], direction[1], direction);
+			if (move.inBounds()) {
+				nextPossibleMoves.add(move);
+				move.updateMemory(numberOfMoves);
+			}
 		}
 
 		while (!nextPossibleMoves.isEmpty()) {
 			Move nextMove = nextPossibleMoves.poll();
-			Position pos = nextMove.pos;
 
-			if (pos.x == Math.abs(x) && pos.y == Math.abs(y))
-				return numberOfMoves.get(pos);
+			if (nextMove.x == Math.abs(x) && nextMove.y == Math.abs(y))
+				return numberOfMoves[nextMove.x][nextMove.y];
 			
 			for (int[] direction : allDirections) {
-				Position nextPos = new Position(pos.x + direction[0], pos.y + direction[1]);
-				Move move = new Move(nextPos, direction);
-				if (move.inBounds() && !numberOfMoves.containsKey(nextPos))
+				int[] nextPos = new int[]{
+					nextMove.x + direction[0], 
+					nextMove.y + direction[1]};
+				Move move = new Move(nextPos[0], nextPos[1], direction);
+				if (move.inBounds() && numberOfMoves[nextPos[0]][nextPos[1]] == 0) {
 					nextPossibleMoves.add(move);
 					move.updateMemory(numberOfMoves);
+				}
 			}
 		}
 
@@ -102,12 +81,16 @@ class Main {
 		Solution solution = new Solution();
 		List<int[]> testSet = new ArrayList<>();
 
+		testSet.add(new int[]{0,2});
 		testSet.add(new int[]{0,1});
 		testSet.add(new int[]{2,1});
 		testSet.add(new int[]{5,5});
 		testSet.add(new int[]{-150, -150});
 		testSet.add(new int[]{209, -58});
 		testSet.add(new int[]{105, 100});
+		testSet.add(new int[]{1,1});
+		testSet.add(new int[]{300, 0});
+		testSet.add(new int[]{-1, 1});
 
 		for (int[] test : testSet)
 			System.out.println(Arrays.toString(test) + " -> " + solution.minKnightMoves(test[0], test[1]));
