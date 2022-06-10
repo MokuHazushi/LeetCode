@@ -11,7 +11,7 @@ impl Solution {
         let max_div = (((2*n) as f32).sqrt().ceil()) as i32;
 
         for n1 in 1..max_div {
-            if (2*n) % n1 == 0 {
+            if 2*n % n1 == 0 {
                 let tmp = n - (n1*(n1+1)/2);
                 if tmp % n1 == 0 {
                     r += 1;
