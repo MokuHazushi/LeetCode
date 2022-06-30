@@ -9,18 +9,9 @@ impl Solution {
         let mut nums = nums;
 
         nums.sort();
-        if nums.len() % 2 == 0 {
-            let mid1_val = nums[nums.len()/2];
-            let mid2_val = nums[nums.len()/2-1];
-            cmp::min(
-                nums.iter().fold(0, |acc, el| acc + (el-mid1_val).abs()),
-                nums.iter().fold(0, |acc, el| acc + (el-mid2_val).abs())
-            )
-        }
-        else {
-            let mid_val = nums[nums.len()/2];
-            nums.iter().fold(0, |acc, el| acc + (el-mid_val).abs())
-        }
+
+        let mid_val = nums[nums.len()/2];
+        nums.iter().fold(0, |acc, el| acc + (el-mid_val).abs())
     }
 }
 
