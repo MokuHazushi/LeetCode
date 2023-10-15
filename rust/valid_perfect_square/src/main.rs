@@ -7,11 +7,11 @@ impl Solution {
         }
 
         let num: i64 = num.into();
-        let mut i: i64 = 1;
-        let mut j: i64 = num.into();
+        let mut i: i64 = 2;
+        let mut j: i64 = (num/2).into();
 
-        while i < j-1 {
-            let mid = i + ((j-i)/2);
+        while i < j {
+            let mid = (i+j)/2;
             let mid_square = mid * mid;
             if mid_square == num {
                 return true;
@@ -23,7 +23,7 @@ impl Solution {
                 j = mid-1;
             }
         }
-        i * i == num || j * j == num
+        i * i == num
     }
 }
 
