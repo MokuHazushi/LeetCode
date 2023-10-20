@@ -1,30 +1,28 @@
-use std::cmp;
-
 struct Solution {}
 
 impl Solution {
     pub fn first_missing_positive(nums: Vec<i32>) -> i32 {
-        let (mut min, mut max) = (i32::MAX, i32::MIN);
-        let mut positives = 0;
-        for num in &nums {
-            if *num <= 0 {
+        let mut ans1 = Solution::search(&nums, 1);
+        let mut ans2 = Solution::search(&nums, ans1);
+
+        while ans1 != ans2 {
+            ans1 = ans2;
+            ans2 = Solution::search(&nums, ans1);
+        }
+        ans1
+    }
+
+    pub fn search(nums: &Vec<i32>, start: i32) -> i32 {
+        let (mut missing, mut i) = (start, 0);
+
+        while i < nums.len() {
+            if nums[i] == missing || nums[nums.len()-1-i] == missing {
+                missing += 1;
                 continue;
             }
-            positives += 1;
-            min = cmp::min(min, *num);
-            max = cmp::max(max, *num);
+            i += 1;
         }
-
-        let holes = max-min+1-positives;
-
-        if holes == 0 {
-            if min == 1 {
-                return max+1;
-            }
-            return 1;
-        }
-
-        0
+        missing
     }
 }
 
