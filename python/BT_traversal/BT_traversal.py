@@ -105,6 +105,41 @@ class Solution:
                 node = None
         
         return ans
+    
+    # Breath-First-Search or Tree level order traversal
+    def bfs(self, root: Optional[TreeNode]) -> List[List[int]]:
+        ans, acc, queue_even, queue_odd = [], [], [root], []
+
+        if not root:
+            return []
+                
+        while queue_even or queue_odd:
+            while queue_even:
+                node = queue_even.pop(0)
+                acc.append(node.val)
+                if node.left:
+                    queue_odd.append(node.left)
+                if node.right:
+                    queue_odd.append(node.right)
+            
+            if acc:
+                ans.append(acc)
+            acc = []
+
+            while queue_odd:
+                node = queue_odd.pop(0)
+                acc.append(node.val)
+                if node.left:
+                    queue_even.append(node.left)
+                if node.right:
+                    queue_even.append(node.right)
+                
+            if acc:
+                ans.append(acc)
+            acc = []
+        
+        return ans
+
 
 
     
@@ -121,3 +156,6 @@ print(solution.inorderTraversal(tree))
 
 print("Post-order:")
 print(solution.postorderTraversal(tree))
+
+print("Breath-First Search order:")
+print(solution.bfs(tree))
