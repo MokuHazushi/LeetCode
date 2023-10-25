@@ -7,16 +7,21 @@ class Solution:
     def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:
         if not root:
             return False
-        # return self.hasPathSum_rec(root, targetSum, 0)
-        return self.hasPathSum_it(root, targetSum)
+        return self.hasPathSum_rec(root, targetSum)
+        #return self.hasPathSum_it(root, targetSum)
     
-    def hasPathSum_rec(self, node: Optional[TreeNode], targetSum: int, acc: int) -> bool:
+    def hasPathSum_rec(self, node: Optional[TreeNode], targetSum: int) -> bool:
         if not node:
-            return targetSum == acc
-        return self.hasPathSum_rec(node.left, targetSum, acc+node.val) \
-            or self.hasPathSum_rec(node.right, targetSum, acc+node.val)
+            return False
+        targetSum -= node.val
+        if (not node.left) and (not node.right):
+            return targetSum == 0
+        return self.hasPathSum_rec(node.left, targetSum) or self.hasPathSum_rec(node.right, targetSum)
     
     def hasPathSum_it(self, root: Optional[TreeNode], targetSum: int) -> bool:
+        if not root:
+            return False
+        
         stack = [(root, root.val)]
 
         while stack:
