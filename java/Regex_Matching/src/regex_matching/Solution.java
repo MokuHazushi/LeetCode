@@ -2,6 +2,7 @@ package regex_matching;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 class Token {
 	enum Type { 
@@ -29,7 +30,7 @@ class Token {
 
 class Node {
 	final Token token;
-	List<Node> neighbors;
+	List<Node> neighbors; // Use 2 neighbors variable instead of a list
 	
 	public Node(Token token, Node... neighbors) {
 		this.token = token;
@@ -59,6 +60,17 @@ class Node {
 	}
 }
 
+class SearchElement {
+	final Node node;
+	final int index;
+	
+	public SearchElement(Node node, int index) {
+		super();
+		this.node = node;
+		this.index = index;
+	}
+}
+
 /** LEETCODE CLASS **/
 class Solution {
     public boolean isMatch(String s, String p) {
@@ -77,8 +89,36 @@ class Solution {
     	}
     	
     	// Search
+    	Stack<SearchElement> stack = new Stack<>();
+    	stack.push(new SearchElement(graph.neighbors.get(0), 0));
     	
-    	return false;        
+    	while (!stack.empty()) {
+    		SearchElement search = stack.pop();
+    		int index = search.index;
+    		Node node = search.node;
+    		
+    		if (node.token == null && index == s.length())
+    			return true;
+    		
+    		if (node.token == null || index == s.length())
+    			continue;
+    		
+    		switch(node.token.type) {
+    		case LETTER:
+    			if (node.token.letter != s.charAt(index))
+    				continue;
+    			for (Node neighbor : node.neighbors)
+    				stack.push(new SearchElement(neighbor, index+1));
+    			break;
+    		case DOT:
+    		case STAR:
+    			for (Node neighbor : node.neighbors)
+    				stack.push(new SearchElement(neighbor, index+1));
+    			break;
+    		}
+    	}
+    	
+    	return false;
     }
 }
 
@@ -86,9 +126,12 @@ class Main {
     public static void main(String args[]) {
         System.out.println("Does string 's' matches pattern 'p'?");
         String[] testCases = new String[] {
+        		/*
         		"aa", "a",
         		"aa", "a*",
-        		"ab", ".*"
+        		"ab", ".*",
+        		*/
+        		"aab", "c*a*b"
         };
  		Solution solution = new Solution();
  		int i = 0;
