@@ -16,17 +16,12 @@ class Token {
 		this.letter = letter;
 	}
 	
-	public Token(Type type) {
-		super();
-		this.type = type;
-	}
-	
 	public static Token toToken(char c) {
 		if (c == '.') {
-			return new Token(Type.DOT);
+			return new Token(Type.DOT, c);
 		}
 		if (c == '*') {
-			return new Token(Type.STAR);
+			return new Token(Type.STAR, c);
 		}
 		return new Token(Type.LETTER, c);
 	}
@@ -72,7 +67,7 @@ class Solution {
     	Node curNode = graph;
     	
     	// Lexer
-    	for (char c : s.toCharArray())
+    	for (char c : p.toCharArray())
     		tokens.add(Token.toToken(c));
     	
     	// Parser
