@@ -5,58 +5,63 @@ import java.util.List;
 import java.util.Stack;
 
 class Token {
-	enum Type { 
-		LETTER, DOT, STAR;
+	final char symbol;
+	
+	public Token(char symbol) {
+		this.symbol = symbol;
 	}
 	
-	final Type type;
-	char letter;
-	
-	public Token(Type type, char letter) {
-		this.type = type;
-		this.letter = letter;
+	public boolean accept(char letter) {
+		if (symbol == '.')
+			return true;
+		return symbol == letter;
 	}
-	
-	public static Token toToken(char c) {
-		if (c == '.') {
-			return new Token(Type.DOT, c);
-		}
-		if (c == '*') {
-			return new Token(Type.STAR, c);
-		}
-		return new Token(Type.LETTER, c);
-	}
+}
+
+class NodeBox {
+	Node node;
 }
 
 class Node {
 	final Token token;
-	List<Node> neighbors; // Use 2 neighbors variable instead of a list
+	NodeBox next, starNext, skipNext;
 	
-	public Node(Token token, Node... neighbors) {
+	public Node(Token token) {
 		this.token = token;
-		this.neighbors = List.of(neighbors);
+		this.next = new NodeBox();
+		this.starNext = new NodeBox();
+		this.skipNext = new NodeBox();
 	}
 	
-	public Node insertNode(Node newNode) {
-		if (newNode.token.type == Token.Type.STAR)
-			return insertStarNode(newNode);
-		
-		newNode.neighbors = List.copyOf(this.neighbors);
-		this.neighbors = List.of(newNode);
+	public Node(Token token, Node neighbor) {
+		this(token);
+		this.next.node = neighbor;
+	}
+	
+	public List<Node> getNeighbors() {
+		List<Node> neighbors = new ArrayList<>();
+		neighbors.add(next.node);
+		if (starNext.node != null)
+			neighbors.add(starNext.node);
+		if (skipNext.node != null)
+			neighbors.add(skipNext.node);
+		return neighbors;
+	}
+	
+	public Node insertNode(Token next) {
+		Node newNode = new Node(next);
+		newNode.next.node = this.next.node;
+		this.next.node = newNode;
 		return newNode;
 	}
 	
-	Node insertStarNode(Node starNode) {
-		starNode.neighbors = new ArrayList<>();
-		starNode.neighbors.add(starNode);
-		starNode.neighbors.addAll(this.neighbors);
-		
-		List<Node> newNeighbors = new ArrayList<>();
-		newNeighbors.addAll(this.neighbors);
-		newNeighbors.add(starNode);
-		this.neighbors = newNeighbors;
-		
-		return starNode;
+	public Node insertStarNode(Token next) {
+		Node newNode = new Node(next);
+		newNode.next.node = this.next.node;
+		newNode.starNext.node = newNode;
+		this.skipNext = newNode.next;
+		this.next.node = newNode;
+		return newNode;
 	}
 }
 
@@ -74,23 +79,26 @@ class SearchElement {
 /** LEETCODE CLASS **/
 class Solution {
     public boolean isMatch(String s, String p) {
-    	List<Token> tokens = new ArrayList<>();
     	Node graph = new Node(null, new Node(null));
     	Node curNode = graph;
     	
-    	// Lexer
-    	for (char c : p.toCharArray())
-    		tokens.add(Token.toToken(c));
-    	
     	// Parser
-    	for (Token token : tokens) {
-    		Node newNode = new Node(token);
-    		curNode = curNode.insertNode(newNode);
+    	for (int i=0; i<p.length(); i++) {
+    		if (p.charAt(i) == '*')
+    			continue;
+    		
+    		Token next = new Token(p.charAt(i));
+    		
+    		if (i < p.length()-1 && p.charAt(i+1) == '*')
+    			curNode = curNode.insertStarNode(next);
+    		else
+    			curNode = curNode.insertNode(next);
     	}
     	
     	// Search
     	Stack<SearchElement> stack = new Stack<>();
-    	stack.push(new SearchElement(graph.neighbors.get(0), 0));
+    	for (Node node : graph.getNeighbors())
+    		stack.push(new SearchElement(node, 0));
     	
     	while (!stack.empty()) {
     		SearchElement search = stack.pop();
@@ -103,18 +111,9 @@ class Solution {
     		if (node.token == null || index == s.length())
     			continue;
     		
-    		switch(node.token.type) {
-    		case LETTER:
-    			if (node.token.letter != s.charAt(index))
-    				continue;
-    			for (Node neighbor : node.neighbors)
+    		if (node.token.accept(s.charAt(index))) {
+    			for (Node neighbor : node.getNeighbors())
     				stack.push(new SearchElement(neighbor, index+1));
-    			break;
-    		case DOT:
-    		case STAR:
-    			for (Node neighbor : node.neighbors)
-    				stack.push(new SearchElement(neighbor, index+1));
-    			break;
     		}
     	}
     	
